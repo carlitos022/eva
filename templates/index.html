@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>EVA v0.1</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <main class="shell">
+    <section class="face-panel">
+      <div class="topline">
+        <span class="dot"></span>
+        <strong>EVA</strong>
+        <span class="version">v0.1</span>
+      </div>
+
+      <div id="face" class="face neutral">
+        <div class="eye eye-left"><div class="pupil"></div></div>
+        <div class="eye eye-right"><div class="pupil"></div></div>
+        <div class="nose"></div>
+        <div class="mouth"></div>
+      </div>
+
+      <div class="status">
+        <span>Estado:</span>
+        <strong id="emotion">curiosa</strong>
+      </div>
+    </section>
+
+    <section class="chat-panel">
+      <div id="messages" class="messages">
+        <div class="msg eva">Hola. Soy EVA. Esta es mi primera ejecucion.</div>
+      </div>
+
+      <form id="chat-form" class="composer">
+        <input id="message" autocomplete="off" placeholder="Escribele a EVA..." maxlength="1000">
+        <button type="submit">Enviar</button>
+      </form>
+    </section>
+  </main>
+
+  <script src="/static/js/face.js"></script>
+  <script src="/static/js/chat.js"></script>
+</body>
+</html>
