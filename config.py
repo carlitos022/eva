@@ -17,7 +17,7 @@ LLM_TIMEOUT = int(os.getenv("EVA_LLM_TIMEOUT", "120"))
 
 # Base de datos
 DB_PROVIDER = os.getenv("EVA_DB_PROVIDER", "mysql")
-DB_HOST = os.getenv("EVA_DB_HOST", "209.126.77.129")
+DB_HOST = os.getenv("EVA_DB_HOST", "127.0.0.1")
 DB_PORT = int(os.getenv("EVA_DB_PORT", "3306"))
 DB_NAME = os.getenv("EVA_DB_NAME", "eva_ai")
 DB_USER = os.getenv("EVA_DB_USER", "eva_user")
