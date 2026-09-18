@@ -8,6 +8,7 @@ class EmotionEngine:
         }
 
     def update_from_text(self, text):
+        # Heuristica inicial. Luego el LLM puede refinar el estado.
         t = text.lower()
         if any(word in t for word in ["gracias", "bien", "genial", "excelente"]):
             self.state["emotion"] = "feliz"
@@ -22,6 +23,16 @@ class EmotionEngine:
         else:
             self.state["emotion"] = "neutral"
             self.state["intensity"] = 0.45
+        return self.state.copy()
+
+    def apply_llm_state(self, emotion, intensity):
+        allowed = {"neutral", "feliz", "curiosa", "preocupada", "sorprendida"}
+        if emotion in allowed:
+            self.state["emotion"] = emotion
+        try:
+            self.state["intensity"] = max(0.0, min(1.0, float(intensity)))
+        except (TypeError, ValueError):
+            pass
         return self.state.copy()
 
     def snapshot(self):
