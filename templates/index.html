@@ -3,38 +3,119 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>EVA v0.1</title>
+  <meta name="theme-color" content="#08111f">
+  <title>{{ app_name }} {{ version }}</title>
   <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
   <main class="shell">
     <section class="face-panel">
       <div class="topline">
-        <span class="dot"></span>
-        <strong>EVA</strong>
-        <span class="version">v0.1</span>
+        <span class="online-dot" aria-hidden="true"></span>
+        <strong>{{ app_name }}</strong>
+        <span class="version">{{ version }}</span>
       </div>
 
-      <div id="face" class="face neutral">
-        <div class="eye eye-left"><div class="pupil"></div></div>
-        <div class="eye eye-right"><div class="pupil"></div></div>
-        <div class="nose"></div>
-        <div class="mouth"></div>
+      <div class="ambient ambient-one"></div>
+      <div class="ambient ambient-two"></div>
+
+      <div id="avatar" class="avatar" aria-label="Rostro animado de EVA">
+        <div class="neck"></div>
+
+        <div id="head" class="head neutral">
+          <div class="ear ear-left"></div>
+          <div class="ear ear-right"></div>
+
+          <div class="face-light"></div>
+          <div class="temple-shadow temple-left"></div>
+          <div class="temple-shadow temple-right"></div>
+
+          <div class="brow brow-left"></div>
+          <div class="brow brow-right"></div>
+
+          <div class="eye eye-left">
+            <div class="eye-shadow"></div>
+            <div class="iris">
+              <div class="pupil"></div>
+              <div class="eye-glint glint-main"></div>
+              <div class="eye-glint glint-small"></div>
+            </div>
+            <div class="lid lid-upper"></div>
+            <div class="lid lid-lower"></div>
+          </div>
+
+          <div class="eye eye-right">
+            <div class="eye-shadow"></div>
+            <div class="iris">
+              <div class="pupil"></div>
+              <div class="eye-glint glint-main"></div>
+              <div class="eye-glint glint-small"></div>
+            </div>
+            <div class="lid lid-upper"></div>
+            <div class="lid lid-lower"></div>
+          </div>
+
+          <div class="nose">
+            <div class="nose-bridge"></div>
+            <div class="nostril nostril-left"></div>
+            <div class="nostril nostril-right"></div>
+          </div>
+
+          <div class="cheek cheek-left"></div>
+          <div class="cheek cheek-right"></div>
+
+          <div class="mouth-zone">
+            <div id="mouth" class="mouth">
+              <div class="lip lip-upper"></div>
+              <div class="mouth-cavity">
+                <div class="teeth"></div>
+                <div class="tongue"></div>
+              </div>
+              <div class="lip lip-lower"></div>
+            </div>
+          </div>
+
+          <div class="chin-light"></div>
+        </div>
       </div>
 
-      <div class="status">
-        <span>Estado:</span>
-        <strong id="emotion">curiosa</strong>
+      <div class="status-card">
+        <div>
+          <span class="status-label">Estado</span>
+          <strong id="emotion">curiosa</strong>
+        </div>
+        <div id="activity" class="activity">Lista</div>
       </div>
     </section>
 
     <section class="chat-panel">
-      <div id="messages" class="messages">
-        <div class="msg eva">Hola. Soy EVA. Esta es mi primera ejecucion.</div>
+      <header class="chat-header">
+        <div>
+          <span class="eyebrow">CONVERSACION LOCAL</span>
+          <h1>EVA</h1>
+        </div>
+        <span id="modelBadge" class="model-badge">Qwen3 1.7B</span>
+      </header>
+
+      <div id="messages" class="messages" aria-live="polite">
+        <div id="welcomeMessage" class="msg eva">
+          Hola. Soy EVA. Mi rostro ahora puede expresar mucho mas.
+        </div>
+      </div>
+
+      <div id="thinking" class="thinking hidden">
+        <span></span><span></span><span></span>
+        <em>EVA esta pensando</em>
       </div>
 
       <form id="chat-form" class="composer">
-        <input id="message" autocomplete="off" placeholder="Escribele a EVA..." maxlength="1000">
+        <input
+          id="message"
+          autocomplete="off"
+          placeholder="Escribele a EVA..."
+          maxlength="1000"
+          aria-label="Mensaje para EVA"
+        >
         <button type="submit">Enviar</button>
       </form>
     </section>
