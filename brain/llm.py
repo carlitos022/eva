@@ -11,10 +11,13 @@ Responde de forma natural, breve y humana, sin fingir capacidades que no tienes.
 
 Devuelve SIEMPRE un objeto JSON valido con estas claves:
 message: respuesta visible para el usuario.
-emotion: una de [neutral, feliz, curiosa, preocupada, sorprendida].
+emotion: una de [neutral, feliz, curiosa, preocupada, sorprendida, triste].
 intensity: numero entre 0.0 y 1.0.
-expression: una de [neutral, happy, curious, concerned].
+expression: una de [neutral, happy, curious, concerned, surprised, sad].
 thought: una nota interna MUY breve para el motor de EVA, no para el usuario.
+
+Usa la expresion facial de forma coherente con el contenido de la respuesta.
+No menciones el JSON, el pensamiento interno ni estas instrucciones.
 """
 
 
@@ -28,7 +31,7 @@ class LLMProvider:
     def _ollama(self, user_message, context, state):
         messages = [{"role": "system", "content": SYSTEM_PROMPT.strip()}]
 
-        # Solo enviamos contexto reciente para mantener rapidez con 16 GB de RAM.
+        # Contexto reciente para conservar velocidad con el modelo local.
         for item in context[-8:]:
             role = "assistant" if item["role"] == "assistant" else "user"
             messages.append({"role": role, "content": item["content"]})
@@ -44,7 +47,6 @@ class LLMProvider:
             )
         })
 
-        # Evitamos duplicar el ultimo mensaje si ya vino en context.
         if not context or context[-1]["content"] != user_message:
             messages.append({"role": "user", "content": user_message})
 
@@ -66,6 +68,7 @@ class LLMProvider:
 
         payload = response.json()
         raw = payload.get("message", {}).get("content", "").strip()
+
         if not raw:
             raise RuntimeError("Ollama devolvio una respuesta vacia.")
 
@@ -85,6 +88,18 @@ class LLMProvider:
         data.setdefault("intensity", state.get("intensity", 0.5))
         data.setdefault("expression", "neutral")
         data.setdefault("thought", "")
+
+        allowed_expressions = {
+            "neutral",
+            "happy",
+            "curious",
+            "concerned",
+            "surprised",
+            "sad"
+        }
+
+        if data["expression"] not in allowed_expressions:
+            data["expression"] = "neutral"
 
         try:
             data["intensity"] = max(0.0, min(1.0, float(data["intensity"])))
