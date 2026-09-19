@@ -152,11 +152,17 @@ window.setEvaListening = function(active){
   if(active){
     currentActivity = "listening";
     setActivityLabel("Escuchando");
-    targetHeadX = 1.8;
-    targetHeadY = 1;
+    targetEyeX = 2;
+    targetEyeY = 0;
+    targetHeadX = 2.8;
+    targetHeadY = 1.4;
   }else if(currentActivity === "listening"){
     currentActivity = "idle";
     setActivityLabel("Lista");
+    targetEyeX = 0;
+    targetEyeY = 0;
+    targetHeadX = 0;
+    targetHeadY = 0;
   }
   applyHeadClasses();
 };
@@ -167,8 +173,8 @@ window.setEvaThinking = function(active){
     setActivityLabel("Pensando");
     targetEyeX = 5;
     targetEyeY = -5;
-    targetHeadX = -2;
-    targetHeadY = -1.5;
+    targetHeadX = -3.1;
+    targetHeadY = -1.9;
   }else if(currentActivity === "thinking"){
     currentActivity = "idle";
     setActivityLabel("Lista");
