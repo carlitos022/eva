@@ -751,6 +751,39 @@ class MemoryStore:
             )
             cur.close()
 
+
+    def list_recent_memories(self, limit=10):
+        if self.provider != "mysql":
+            return []
+
+        with self._mysql_connection() as con:
+            cur = con.cursor()
+            cur.execute(
+                "SELECT id, memory_type, content, importance, "
+                "emotional_value, created_at, access_count "
+                "FROM memories ORDER BY id DESC LIMIT %s",
+                (limit,)
+            )
+            rows = cur.fetchall()
+            cur.close()
+
+        return [
+            {
+                "id": row[0],
+                "type": row[1],
+                "content": row[2],
+                "importance": _float(row[3]),
+                "emotional_value": _float(row[4]),
+                "created_at": (
+                    row[5].isoformat()
+                    if hasattr(row[5], "isoformat")
+                    else str(row[5])
+                ),
+                "access_count": int(row[6] or 0)
+            }
+            for row in rows
+        ]
+
     def cognitive_context(self, user_message):
         return {
             "identity": self.get_identity(),
