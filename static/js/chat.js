@@ -7,6 +7,15 @@ const thinking = document.getElementById("thinking");
 const welcomeMessage = document.getElementById("welcomeMessage");
 
 let thinkingTimer = null;
+let thinkingShownAt = 0;
+let interactionStartedAt = 0;
+
+const MIN_LISTEN_MS = 500;
+const MIN_THINK_MS = 450;
+
+function delay(ms){
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 function addMessage(text, who){
   const el = document.createElement("div");
@@ -76,6 +85,9 @@ form.addEventListener("submit", async (event) => {
   const text = input.value.trim();
   if(!text) return;
 
+  interactionStartedAt = performance.now();
+  thinkingShownAt = 0;
+
   addMessage(text, "user");
   input.value = "";
   input.disabled = true;
@@ -87,8 +99,9 @@ form.addEventListener("submit", async (event) => {
     window.setEvaListening(false);
     window.setEvaThinking(true);
     thinking.classList.remove("hidden");
+    thinkingShownAt = performance.now();
     thinkingTimer = null;
-  }, 260);
+  }, MIN_LISTEN_MS);
 
   try{
     const response = await fetch("/api/chat", {
@@ -103,7 +116,21 @@ form.addEventListener("submit", async (event) => {
       throw new Error(data.error || "Error");
     }
 
+    const elapsed = performance.now() - interactionStartedAt;
+
+    if(elapsed < MIN_LISTEN_MS){
+      await delay(MIN_LISTEN_MS - elapsed);
+    }
+
+    if(thinkingShownAt){
+      const thinkingElapsed = performance.now() - thinkingShownAt;
+      if(thinkingElapsed < MIN_THINK_MS){
+        await delay(MIN_THINK_MS - thinkingElapsed);
+      }
+    }
+
     stopWaitingAnimations();
+
     addMessage(data.message, "eva");
 
     const emotionName = data.emotion || "neutral";
@@ -115,12 +142,23 @@ form.addEventListener("submit", async (event) => {
   }catch(err){
     stopWaitingAnimations();
     window.setEvaExpression("concerned", 0.75);
-
     addMessage("No pude procesar el mensaje: " + err.message, "eva");
   }finally{
     input.disabled = false;
     sendButton.disabled = false;
     input.focus();
+  }
+});
+
+input.addEventListener("focus", () => {
+  if(!input.disabled){
+    window.setEvaListening(true);
+  }
+});
+
+input.addEventListener("blur", () => {
+  if(!input.disabled){
+    window.setEvaListening(false);
   }
 });
 
