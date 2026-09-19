@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 APP_NAME = "EVA"
-APP_VERSION = "0.2.1"
+APP_VERSION = "0.3.0"
 HOST = "127.0.0.1"
 PORT = 5000
 DEBUG = True
@@ -24,5 +24,11 @@ DB_USER = os.getenv("EVA_DB_USER", "eva_user")
 DB_PASSWORD = os.getenv("EVA_DB_PASSWORD", "")
 DB_CONNECT_TIMEOUT = int(os.getenv("EVA_DB_CONNECT_TIMEOUT", "10"))
 
-# SQLite queda como fallback de emergencia
+# Memoria y cognicion
+RECENT_CONTEXT_LIMIT = int(os.getenv("EVA_RECENT_CONTEXT_LIMIT", "8"))
+LONG_TERM_MEMORY_LIMIT = int(os.getenv("EVA_LONG_TERM_MEMORY_LIMIT", "6"))
+MEMORY_SCAN_LIMIT = int(os.getenv("EVA_MEMORY_SCAN_LIMIT", "300"))
+MEMORY_MIN_IMPORTANCE = float(os.getenv("EVA_MEMORY_MIN_IMPORTANCE", "0.55"))
+
+# SQLite queda como fallback basico de emergencia
 DB_PATH = os.path.join(os.path.dirname(__file__), "data", "eva.db")
