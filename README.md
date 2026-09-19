@@ -1,39 +1,69 @@
 # EVA - Artificial Face
 
-EVA es un experimento de agente artificial con rostro animado, chat, memoria persistente, estado emocional y proveedor LLM intercambiable.
+EVA es un experimento de agente artificial con rostro animado, chat, memoria persistente, estado emocional y un LLM local intercambiable.
 
-## Version 0.1
+## Version actual: v0.2.1
 
-Objetivos:
-- Cara 2D animada
-- Chat web
-- Backend en Python/Flask
-- Memoria SQLite
+### Cerebro
+- Qwen3 1.7B mediante Ollama local
+- Flask/Python
+- MySQL remoto para conversaciones persistentes
 - Estado emocional basico
-- Proveedor LLM desacoplado
-- Modo demo sin API para probar toda la interfaz
+- Respuesta estructurada con emocion, intensidad y expresion
 
-## Requisitos
-
-- Windows 11 x64
-- Python 3.11+
-- Git
+### Rostro v0.2.1
+- Forma facial mas humana
+- Iris, pupila y reflejos
+- Cejas expresivas
+- Parpados superiores e inferiores
+- Parpadeo natural y parpadeo doble ocasional
+- Seguimiento suave del puntero
+- Sacadas oculares automaticas cuando no hay movimiento del mouse
+- Micro movimientos de cabeza
+- Respiracion visual sutil
+- Mejillas y rubor emocional
+- Nariz y orejas estilizadas
+- Boca con labios, dientes y cavidad
+- Visemas simulados mientras EVA responde
+- Microsonrisa ocasional
+- Estados visuales: neutral, feliz, curiosa, preocupada, sorprendida y triste
+- Animaciones de escuchando, pensando y hablando
 
 ## Inicio rapido
 
 ```powershell
-git clone https://github.com/carlitos022/eva.git
-cd eva
-python -m venv .venv
+cd C:\Users\USUARIO\Desktop\eva
+git pull
 .\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
+python tools\test_connections.py
 python app.py
 ```
 
-Luego abre:
+Abre:
 
 http://127.0.0.1:5000
 
-## Estado
+## Arquitectura actual
 
-Version actual: v0.1-demo
+```text
+Usuario
+  |
+  v
+Interfaz EVA
+  |
+  +--> Rostro animado v0.2.1
+  |
+  +--> Flask
+        |
+        +--> Qwen3 1.7B / Ollama
+        |
+        +--> MySQL / eva_ai
+```
+
+## Siguiente etapa prevista
+
+- memoria autobiografica de largo plazo
+- persistencia del estado emocional
+- voz local
+- sincronizacion labial con audio real
+- evolucion posterior a rostro 3D
