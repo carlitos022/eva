@@ -40,7 +40,7 @@ class MemoryStore:
                     id BIGINT AUTO_INCREMENT PRIMARY KEY,
                     role VARCHAR(20) NOT NULL,
                     content TEXT NOT NULL,
-                    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                     INDEX idx_conversations_created_at (created_at)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
             """)
