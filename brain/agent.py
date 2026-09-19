@@ -38,7 +38,8 @@ class EvaAgent:
             "feliz": "happy",
             "curiosa": "curious",
             "preocupada": "concerned",
-            "sorprendida": "curious",
+            "sorprendida": "surprised",
+            "triste": "sad",
             "neutral": "neutral",
         }.get(state["emotion"], "neutral")
 
