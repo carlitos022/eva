@@ -138,7 +138,20 @@ form.addEventListener("submit", async (event) => {
     const intensity = Number(data.intensity ?? 0.55);
 
     emotion.textContent = emotionName;
-    window.reactToReply(expression, intensity, data.message.length);
+    window.setEvaExpression(expression, intensity);
+
+    const voiceStarted = (
+      typeof window.speakEva === "function"
+      && window.speakEva(data.message)
+    );
+
+    if(!voiceStarted){
+      window.reactToReply(
+        expression,
+        intensity,
+        data.message.length
+      );
+    }
   }catch(err){
     stopWaitingAnimations();
     window.setEvaExpression("concerned", 0.75);
