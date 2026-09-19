@@ -521,6 +521,33 @@ body{
 }
 .chat-header h1{margin:3px 0 0;font-size:25px}
 .eyebrow{color:#7389a8;font-size:11px;letter-spacing:.16em}
+.header-actions{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.voice-toggle{
+  padding:8px 12px;
+  border:1px solid #2a4264;
+  border-radius:999px;
+  color:#b7cef0;
+  background:#0d1a2d;
+  font:inherit;
+  font-size:12px;
+  cursor:pointer;
+  transition:opacity .2s,border-color .2s,background .2s;
+}
+
+.voice-toggle:hover{
+  border-color:#4c6f9c;
+  background:#11233d;
+}
+
+.voice-toggle.off{
+  opacity:.55;
+}
+
 .model-badge{
   padding:8px 12px;
   border:1px solid #2a4264;
