@@ -1,4 +1,13 @@
+import os
 import sys
+
+# Permite ejecutar este archivo directamente con:
+# python tools\test_connections.py
+# agregando la raiz del proyecto al path de Python.
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
+
 import requests
 import mysql.connector
 
