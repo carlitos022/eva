@@ -185,21 +185,33 @@ class LLMProvider:
         if not context or context[-1]["content"] != user_message:
             messages.append({"role": "user", "content": user_message})
 
+        request_payload = {
+            "model": LLM_MODEL,
+            "messages": messages,
+            "stream": False,
+            "format": "json",
+            "think": False,
+            "options": {
+                "temperature": 0.65,
+                "num_ctx": 4096
+            }
+        }
+
         response = requests.post(
             f"{LLM_BASE_URL.rstrip('/')}/api/chat",
-            json={
-                "model": LLM_MODEL,
-                "messages": messages,
-                "stream": False,
-                "format": "json",
-                "think": False,
-                "options": {
-                    "temperature": 0.65,
-                    "num_ctx": 4096
-                }
-            },
+            json=request_payload,
             timeout=LLM_TIMEOUT
         )
+
+        # Compatibilidad con versiones de Ollama que aun no aceptan "think".
+        if response.status_code == 400:
+            request_payload.pop("think", None)
+            response = requests.post(
+                f"{LLM_BASE_URL.rstrip('/')}/api/chat",
+                json=request_payload,
+                timeout=LLM_TIMEOUT
+            )
+
         response.raise_for_status()
 
         raw = response.json().get("message", {}).get("content", "").strip()
