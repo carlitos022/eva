@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 APP_NAME = "EVA"
-APP_VERSION = "0.1.1"
+APP_VERSION = "0.2.1"
 HOST = "127.0.0.1"
 PORT = 5000
 DEBUG = True
