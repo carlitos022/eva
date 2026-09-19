@@ -52,6 +52,7 @@ class MemoryStore:
         if self.provider == "mysql":
             self._mysql_initialize()
             self.seed_identity()
+            self.bootstrap_legacy_user_identity()
         else:
             self._sqlite_initialize()
 
@@ -433,6 +434,89 @@ class MemoryStore:
                     ")"
                 )
                 cur.close()
+
+    def bootstrap_legacy_user_identity(self):
+        if self.provider != "mysql":
+            return
+
+        existing = {
+            item["key"]
+            for item in self.get_identity("user")
+        }
+
+        if {"name", "preferred_name"}.issubset(existing):
+            return
+
+        with self._mysql_connection() as con:
+            cur = con.cursor()
+            cur.execute(
+                "SELECT content FROM conversations "
+                "WHERE role='user' ORDER BY id DESC LIMIT 500"
+            )
+            rows = cur.fetchall()
+            cur.close()
+
+        name = None
+        preferred_name = None
+
+        for row in rows:
+            text = row[0] or ""
+
+            if name is None:
+                match = re.search(
+                    r"\bmi nombre es\s+([A-Za-zÁÉÍÓÚÑáéíóúñ]+)",
+                    text,
+                    re.IGNORECASE
+                )
+                if not match:
+                    match = re.search(
+                        r"\bme llamo\s+([A-Za-zÁÉÍÓÚÑáéíóúñ]+)",
+                        text,
+                        re.IGNORECASE
+                    )
+                if match:
+                    name = match.group(1)
+
+            if preferred_name is None:
+                match = re.search(
+                    r"\bpuedes\s+(?:decirme|llamarme)\s+"
+                    r"([A-Za-zÁÉÍÓÚÑáéíóúñ]+)",
+                    text,
+                    re.IGNORECASE
+                )
+                if match:
+                    preferred_name = match.group(1)
+
+            if name and preferred_name:
+                break
+
+        if name and "name" not in existing:
+            self.upsert_identity(
+                "user",
+                "name",
+                name,
+                0.95
+            )
+            self.add_memory(
+                "identity",
+                f"El usuario se llama {name}.",
+                0.95,
+                0.1
+            )
+
+        if preferred_name and "preferred_name" not in existing:
+            self.upsert_identity(
+                "user",
+                "preferred_name",
+                preferred_name,
+                0.95
+            )
+            self.add_memory(
+                "preference",
+                f"El usuario prefiere que EVA lo llame {preferred_name}.",
+                0.95,
+                0.2
+            )
 
     def upsert_identity(
         self,
