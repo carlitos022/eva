@@ -132,12 +132,26 @@ body{
 .neck{
   position:absolute;
   z-index:0;
-  bottom:10px;
-  width:135px;
-  height:120px;
-  border-radius:20px 20px 54px 54px;
-  background:linear-gradient(180deg,var(--skin-shadow),#7f93aa);
-  box-shadow:inset 0 15px 18px rgba(0,0,0,.08);
+  bottom:-14px;
+  width:112px;
+  height:96px;
+  border-radius:40px 40px 54px 54px;
+  background:linear-gradient(180deg,#a4b6c9,#8ea2ba);
+  box-shadow:
+    inset 0 12px 16px rgba(255,255,255,.08),
+    inset 0 -10px 16px rgba(0,0,0,.08);
+}
+
+.neck::before{
+  content:"";
+  position:absolute;
+  top:-10px;
+  left:50%;
+  width:138px;
+  height:24px;
+  transform:translateX(-50%);
+  border-radius:50%;
+  background:radial-gradient(ellipse,rgba(11,18,30,.20),rgba(11,18,30,0) 72%);
 }
 
 .head{
@@ -672,14 +686,48 @@ body{
 
 /* Actividades */
 .head.thinking{
-  filter:drop-shadow(0 0 16px rgba(93,143,235,.15));
+  filter:drop-shadow(0 0 16px rgba(93,143,235,.18));
 }
-.head.thinking .brow-left{transform:translateY(-7px) rotate(-9deg)}
-.head.thinking .brow-right{transform:translateY(2px) rotate(6deg)}
+.head.thinking .brow-left{
+  transform:translateY(-11px) rotate(-13deg);
+}
+.head.thinking .brow-right{
+  transform:translateY(1px) rotate(8deg);
+}
+.head.thinking .eye-left{
+  transform:translateY(2px) scaleY(.92);
+}
+.head.thinking .eye-right{
+  transform:translateY(-1px) scaleY(.96);
+}
+.head.thinking .mouth{
+  width:58px;
+  transform:translateX(4px) translateY(3px);
+}
+.head.thinking .mouth-cavity{
+  height:0;
+}
 
-.head.listening .eye{transform:scaleY(1.04)}
-.head.listening .brow-left{transform:translateY(-3px) rotate(-6deg)}
-.head.listening .brow-right{transform:translateY(-3px) rotate(6deg)}
+.head.listening{
+  filter:drop-shadow(0 0 12px rgba(114,239,157,.14));
+}
+.head.listening .eye{
+  transform:scaleY(1.08);
+}
+.head.listening .brow-left{
+  transform:translateY(-8px) rotate(-10deg);
+}
+.head.listening .brow-right{
+  transform:translateY(-8px) rotate(10deg);
+}
+.head.listening .mouth{
+  width:72px;
+  transform:translateY(-2px);
+}
+.head.listening .mouth-cavity{
+  height:5px;
+  width:58%;
+}
 
 /* Visemas aproximados mientras EVA responde */
 .mouth.speaking.viseme-a{width:68px;height:49px}
