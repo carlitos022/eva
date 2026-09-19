@@ -94,7 +94,10 @@
           <span class="eyebrow">CONVERSACION LOCAL</span>
           <h1>EVA</h1>
         </div>
-        <span id="modelBadge" class="model-badge">Qwen3 1.7B</span>
+        <div class="header-actions">
+          <button id="voiceToggle" class="voice-toggle" type="button" aria-pressed="true">🔊 Voz</button>
+          <span id="modelBadge" class="model-badge">Qwen3 1.7B</span>
+        </div>
       </header>
 
       <div id="messages" class="messages" aria-live="polite">
@@ -122,6 +125,7 @@
   </main>
 
   <script src="/static/js/face.js"></script>
+  <script src="/static/js/voice.js"></script>
   <script src="/static/js/chat.js"></script>
 </body>
 </html>
