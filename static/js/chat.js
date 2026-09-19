@@ -6,6 +6,8 @@ const emotion = document.getElementById("emotion");
 const thinking = document.getElementById("thinking");
 const welcomeMessage = document.getElementById("welcomeMessage");
 
+let thinkingTimer = null;
+
 function addMessage(text, who){
   const el = document.createElement("div");
   el.className = "msg " + who;
@@ -36,6 +38,17 @@ function mapExpression(expression, emotionName){
   };
 
   return fallback[emotionName] || "neutral";
+}
+
+function stopWaitingAnimations(){
+  if(thinkingTimer){
+    clearTimeout(thinkingTimer);
+    thinkingTimer = null;
+  }
+
+  window.setEvaListening(false);
+  window.setEvaThinking(false);
+  thinking.classList.add("hidden");
 }
 
 async function restoreVisualState(){
@@ -70,10 +83,11 @@ form.addEventListener("submit", async (event) => {
 
   window.setEvaListening(true);
 
-  setTimeout(() => {
+  thinkingTimer = setTimeout(() => {
     window.setEvaListening(false);
     window.setEvaThinking(true);
     thinking.classList.remove("hidden");
+    thinkingTimer = null;
   }, 260);
 
   try{
@@ -89,9 +103,7 @@ form.addEventListener("submit", async (event) => {
       throw new Error(data.error || "Error");
     }
 
-    thinking.classList.add("hidden");
-    window.setEvaThinking(false);
-
+    stopWaitingAnimations();
     addMessage(data.message, "eva");
 
     const emotionName = data.emotion || "neutral";
@@ -101,8 +113,7 @@ form.addEventListener("submit", async (event) => {
     emotion.textContent = emotionName;
     window.reactToReply(expression, intensity, data.message.length);
   }catch(err){
-    thinking.classList.add("hidden");
-    window.setEvaThinking(false);
+    stopWaitingAnimations();
     window.setEvaExpression("concerned", 0.75);
 
     addMessage("No pude procesar el mensaje: " + err.message, "eva");
