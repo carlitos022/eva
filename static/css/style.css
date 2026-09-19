@@ -358,7 +358,7 @@ body{
   width:78px;
   height:41px;
   border-radius:50%;
-  background:radial-gradient(ellipse,rgba(239,167,182,calc(.18 + var(--emotion-intensity) * .16)),rgba(239,167,182,0) 72%);
+  background:radial-gradient(ellipse,rgba(239,167,182,.34),rgba(239,167,182,0) 72%);
   opacity:.32;
   transition:opacity .28s ease,transform .28s ease;
 }
