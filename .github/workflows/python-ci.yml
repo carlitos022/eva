@@ -1,0 +1,36 @@
+name: EVA Python CI
+
+on:
+  push:
+    branches: [main, eva-v0.4-memory-cortex]
+  pull_request:
+    branches: [main]
+
+jobs:
+  python-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Compile Python
+        run: python -m compileall -q app.py brain tools config.py
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Import cognitive core
+        run: |
+          python - <<'PY'
+          from brain.agent import EvaAgent
+          from brain.memory import MemoryStore
+          from brain.memory_cortex import MemoryCortex
+          from brain.archivist import PostTurnArchivist
+          from brain.embeddings import OllamaEmbeddingClient
+          print("EVA core imports: OK")
+          PY

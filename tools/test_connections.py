@@ -12,15 +12,18 @@ import requests
 import mysql.connector
 
 from brain.memory import MemoryStore
+from brain.memory_cortex import MemoryCortex
 from config import (
+    DB_CONNECT_TIMEOUT,
+    DB_HOST,
+    DB_NAME,
+    DB_PASSWORD,
+    DB_PORT,
+    DB_USER,
+    EMBEDDING_MODEL,
+    EMBEDDINGS_ENABLED,
     LLM_BASE_URL,
     LLM_MODEL,
-    DB_HOST,
-    DB_PORT,
-    DB_NAME,
-    DB_USER,
-    DB_PASSWORD,
-    DB_CONNECT_TIMEOUT
 )
 
 
@@ -40,27 +43,47 @@ def test_ollama():
         ]
 
         print("Servidor:", LLM_BASE_URL)
-        print("Modelo esperado:", LLM_MODEL)
+        print("Modelo chat:", LLM_MODEL)
+        print("Modelo embeddings:", EMBEDDING_MODEL)
         print(
             "Modelos encontrados:",
             ", ".join(models) or "(ninguno)"
         )
 
-        if not any(
+        chat_ok = any(
             name == LLM_MODEL
             or name.startswith(LLM_MODEL + ":")
             for name in models
-        ):
-            print(
-                "AVISO: Ollama responde, pero el modelo "
-                "esperado no aparece en la lista."
-            )
-            return False
-
-        print(
-            "OK: Ollama responde y el modelo esta disponible."
         )
-        return True
+
+        embedding_ok = any(
+            name == EMBEDDING_MODEL
+            or name.startswith(EMBEDDING_MODEL + ":")
+            for name in models
+        )
+
+        if not chat_ok:
+            print(
+                "ERROR: Ollama responde, pero el modelo de chat "
+                "no aparece en la lista."
+            )
+            return False, embedding_ok
+
+        print("OK: modelo de chat disponible.")
+
+        if EMBEDDINGS_ENABLED:
+            if embedding_ok:
+                print("OK: modelo de embeddings disponible.")
+            else:
+                print(
+                    "AVISO: bge-m3 no esta instalado. EVA seguira "
+                    "funcionando con memoria lexical."
+                )
+                print(
+                    f"Instalalo con: ollama pull {EMBEDDING_MODEL}"
+                )
+
+        return True, embedding_ok
 
     except Exception as exc:
         print("ERROR OLLAMA:", exc)
@@ -68,7 +91,7 @@ def test_ollama():
             "SUGERENCIA: inicia Ollama con 'ollama serve' "
             "o abre la aplicacion Ollama."
         )
-        return False
+        return False, False
 
 
 def test_mysql():
@@ -108,15 +131,18 @@ def test_mysql():
 
 
 def test_cognitive_schema():
-    print("\n=== EVA COGNITIVE DB ===")
+    print("\n=== EVA MEMORY CORTEX ===")
 
     try:
         store = MemoryStore()
         store.initialize()
 
+        cortex = MemoryCortex(store)
+        cortex.initialize()
+
         stats = store.stats()
 
-        required = [
+        required_base = [
             "conversations",
             "memories",
             "identity_profile",
@@ -127,24 +153,36 @@ def test_cognitive_schema():
             "decisions"
         ]
 
-        for table in required:
+        for table in required_base:
             print(
-                f"{table:18}: "
+                f"{table:20}: "
                 f"{stats.get(table, 0)} registros"
             )
 
+        status = cortex.status()
         print(
-            "OK: esquema cognitivo v0.3.0 preparado."
+            f"{'entities':20}: "
+            f"{status.get('entities', 0)} registros"
         )
+        print(
+            f"{'memory_tree':20}: "
+            f"{status.get('tree_branches', 0)} ramas"
+        )
+        print(
+            f"{'tasks':20}: "
+            f"{status.get('tasks', 0)} pendientes"
+        )
+
+        print("OK: esquema cognitivo v0.4.0 preparado.")
         return True
 
     except Exception as exc:
-        print("ERROR COGNITIVE DB:", exc)
+        print("ERROR MEMORY CORTEX:", exc)
         return False
 
 
 if __name__ == "__main__":
-    ollama_ok = test_ollama()
+    ollama_ok, embedding_ok = test_ollama()
     mysql_ok = test_mysql()
 
     cognitive_ok = False
@@ -154,23 +192,27 @@ if __name__ == "__main__":
 
     print("\n=== RESULTADO ===")
     print(
-        "Ollama       :",
+        "Ollama chat   :",
         "OK" if ollama_ok else "FALLO"
     )
     print(
-        "MySQL        :",
+        "Embeddings    :",
+        (
+            "OK"
+            if embedding_ok
+            else "FALLBACK LEXICAL"
+        )
+    )
+    print(
+        "MySQL         :",
         "OK" if mysql_ok else "FALLO"
     )
     print(
-        "Cognitive DB :",
+        "Memory Cortex :",
         "OK" if cognitive_ok else "FALLO"
     )
 
-    if not (
-        ollama_ok
-        and mysql_ok
-        and cognitive_ok
-    ):
+    if not (ollama_ok and mysql_ok and cognitive_ok):
         sys.exit(1)
 
-    print("\nTodo listo para iniciar EVA v0.3.0.")
+    print("\nTodo listo para iniciar EVA v0.4.0.")
