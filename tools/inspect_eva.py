@@ -9,24 +9,42 @@ if ROOT_DIR not in sys.path:
     sys.path.insert(0, ROOT_DIR)
 
 from brain.memory import MemoryStore
+from brain.memory_cortex import MemoryCortex
 
 
 def print_section(title):
     print()
-    print("=" * 68)
+    print("=" * 72)
     print(title)
-    print("=" * 68)
+    print("=" * 72)
 
 
 def main():
     store = MemoryStore()
     store.initialize()
 
-    print_section("EVA - ESTADO COGNITIVO PERSISTENTE")
+    cortex = MemoryCortex(store)
+    cortex.initialize()
 
-    print("Estadisticas:")
+    print_section("EVA v0.4.0 - ESTADO COGNITIVO PERSISTENTE")
+
+    print("Estadisticas base:")
     for name, count in store.stats().items():
-        print(f"  {name:18} {count}")
+        print(f"  {name:20} {count}")
+
+    print_section("MEMORY CORTEX")
+    status = cortex.status()
+    print("  engine:", status.get("engine"))
+    print("  tree_branches:", status.get("tree_branches"))
+    print("  entities:", status.get("entities"))
+    print("  tasks:", status.get("tasks"))
+
+    embeddings = status.get("embeddings", {})
+    print("  embeddings_enabled:", embeddings.get("enabled"))
+    print("  embedding_model:", embeddings.get("model"))
+    print("  embeddings_ready:", embeddings.get("ready"))
+    if embeddings.get("last_error"):
+        print("  embeddings_last_error:", embeddings["last_error"])
 
     print_section("IDENTIDAD")
     for item in store.get_identity():
@@ -66,7 +84,34 @@ def main():
                 f"progreso {goal['progress']:.2f})"
             )
 
-    print_section("ULTIMAS MEMORIAS DE LARGO PLAZO")
+    print_section("ENTIDADES")
+    entities = cortex.list_entities(20)
+    if not entities:
+        print("  Todavia no hay entidades archivadas.")
+    else:
+        for entity in entities:
+            print(
+                f"  #{entity['id']} [{entity['type']}] "
+                f"{entity['name']} imp={entity['importance']:.2f}"
+            )
+            if entity.get("summary"):
+                print("     ", entity["summary"])
+
+    print_section("MEMORY TREE")
+    tree = cortex.get_memory_tree(20)
+    if not tree:
+        print("  Arbol vacio.")
+    else:
+        for branch in tree:
+            print(
+                f"  {branch['path']} "
+                f"({branch['items']} items, "
+                f"imp={branch['importance']:.2f})"
+            )
+            if branch.get("summary"):
+                print("     ", branch["summary"][:300])
+
+    print_section("ULTIMAS MEMORIAS")
     memories = store.list_recent_memories(15)
     if not memories:
         print("  Todavia no hay memorias seleccionadas.")
