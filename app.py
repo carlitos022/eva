@@ -17,7 +17,15 @@ def index():
     )
 
 
-@app.get("/health")\ndef health():\n    return jsonify({"status": "ok", "version": APP_VERSION})\n\n\n@app.get("/api/state")
+@app.get("/health")
+def health():
+    return jsonify({
+        "status": "ok",
+        "version": APP_VERSION
+    })
+
+
+@app.get("/api/state")
 def state():
     return jsonify(eva.get_state())
 
